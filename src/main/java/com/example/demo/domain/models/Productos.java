@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @ToString
 
-public class Producto {
+public class Productos {
     private Long id;
     private String nombre;
     private Double precio;
