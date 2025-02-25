@@ -15,31 +15,28 @@ public class CategoriaUseCase implements CategoriaPort {
     }
 
     @Override
-    public Categoria guardarCategoria(Categoria categoria){
+    public Categoria createCategoria(Categoria categoria){
         return categoriaRepositoryPort.save(categoria);
     }
 
     @Override
-    public Optional<Categoria> obtenerCategoriaPorId(Long id){
+    public Optional<Categoria> getCategoriaId(Long id){
         return  categoriaRepositoryPort.findById(id);
     }
 
     @Override
-    public List<Categoria> listarCategorias(){
+    public List<Categoria> getAllCategorias(){
         return categoriaRepositoryPort.findAll();
     }
 
     @Override
-    public  Categoria actualizarCategoria(Long id, Categoria categoria){
-        Optional<Categoria> categoriaExistente = categoriaRepositoryPort.findById(id);
-        if (categoriaExistente.isPresent()){
-            return categoriaRepositoryPort.update(id, categoria).orElseThrow(()-> new RuntimeException("No se puede actualizar la categoría"));
-        }
-        throw new RuntimeException("Categoría no encontrada");
+    public Categoria updateCategoria(Long id, Categoria categoria){
+        return categoriaRepositoryPort.update(id, categoria)
+                .orElseThrow(() -> new RuntimeException("No se puede actualizar la categoría porque no existe"));
     }
 
     @Override
-    public void eliminarCategoria(Long id){
+    public void deleteCategoria(Long id){
         categoriaRepositoryPort.delete(id);
     }
 }
