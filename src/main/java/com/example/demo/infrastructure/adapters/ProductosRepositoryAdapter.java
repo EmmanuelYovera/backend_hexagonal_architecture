@@ -5,6 +5,7 @@ import com.example.demo.domain.models.Productos;
 import com.example.demo.domain.ports.out.ProductosRepositoryPort;
 import com.example.demo.infrastructure.entities.CategoriaEntity;
 import com.example.demo.infrastructure.entities.ProductosEntity;
+import com.example.demo.infrastructure.repositories.CategoriaRepository;
 import com.example.demo.infrastructure.repositories.ProductosRepository;
 import org.springframework.stereotype.Component;
 
@@ -15,15 +16,22 @@ import java.util.stream.Collectors;
 @Component
 public class ProductosRepositoryAdapter implements ProductosRepositoryPort {
     private final ProductosRepository productosRepository;
+    private final CategoriaRepository categoriaRepository;
 
-    public ProductosRepositoryAdapter(ProductosRepository productosRepository){
+    public ProductosRepositoryAdapter(ProductosRepository productosRepository, CategoriaRepository categoriaRepository){
         this.productosRepository = productosRepository;
+        this.categoriaRepository = categoriaRepository;
     }
 
     @Override
+
     public Productos save(Productos productos) {
-        CategoriaEntity categoriaEntity = new CategoriaEntity();
-        categoriaEntity.setId(productos.getCategoria().getId());
+        if (productos.getPrecio() < 0) {
+            throw new RuntimeException("El precio del producto no puede ser negativo.");
+        }
+
+        CategoriaEntity categoriaEntity = categoriaRepository.findById(productos.getCategoria().getId())
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + productos.getCategoria().getId()));
 
         ProductosEntity productosEntity = new ProductosEntity();
         productosEntity.setNombre(productos.getNombre());
@@ -38,6 +46,7 @@ public class ProductosRepositoryAdapter implements ProductosRepositoryPort {
                 new Categoria(saveEntity.getCategoria().getId(), saveEntity.getCategoria().getNombre())
         );
     }
+
 
     @Override
     public Optional<Productos> findById(Long id) {
