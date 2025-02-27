@@ -1,5 +1,6 @@
 package com.example.demo.infrastructure.entities;
 
+import com.example.demo.domain.models.Categoria;
 import jakarta.persistence.*;
 
 @Entity
